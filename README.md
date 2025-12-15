@@ -1,5 +1,8 @@
 # SnapChef 🍳📸
 
+[![Live on Vercel](https://img.shields.io/badge/Vercel-Live-black?style=for-the-badge&logo=vercel)](https://snap-chef-khaki.vercel.app/)
+[![Live on Render](https://img.shields.io/badge/Render-Live-black?style=for-the-badge&logo=render)](https://snapchef-5wbq.onrender.com)
+
 <p align="center">
   <img src="src/assets/logo.png" alt="SnapChef Logo" width="150"/>
 </p>
@@ -72,7 +75,7 @@
 
 ## 📱 Deployment
 
-*   **Web**: Auto-deploys via Render (Static Site) linked to this repo.
+*   **Web**: Auto-deploys via Vercel and Render linked to this repo.
 *   **Android**: Distributed via Firebase App Distribution.
 *   **iOS**: TestFlight.
 
