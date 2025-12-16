@@ -35,8 +35,8 @@
                 <ion-spinner v-if="isAnalyzing"></ion-spinner>
                 
                 <div class="add-ingredient">
-                  <ion-input v-model="newIngredient" placeholder="Add ingredient"></ion-input>
-                  <ion-button @click="addIngredient" :disabled="!newIngredient">Add</ion-button>
+                  <ion-input v-model="newIngredient" placeholder="Add ingredient" data-testid="ingredient-input"></ion-input>
+                  <ion-button @click="addIngredient" :disabled="!newIngredient" data-testid="add-btn">Add</ion-button>
                 </div>
 
                 <div class="ion-text-center ion-padding-top">
