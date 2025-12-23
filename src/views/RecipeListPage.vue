@@ -40,7 +40,7 @@ import {
   IonPage, IonHeader, IonToolbar, IonButtons, IonBackButton, IonTitle, IonContent,
   IonList, IonItem, IonLabel, IonThumbnail, IonSpinner, IonButton
 } from '@ionic/vue';
-import { findRecipesByIngredients, Recipe } from '@/services/RecipeService';
+import { findRecipesByIngredients, findRecipesByLocation, Recipe } from '@/services/RecipeService';
 
 const route = useRoute();
 const router = useRouter();
@@ -49,11 +49,24 @@ const loading = ref(true);
 
 onMounted(async () => {
   const ingredientsStr = route.query.ingredients as string;
+  const lat = route.query.lat as string;
+  const lng = route.query.lng as string;
+
   if (ingredientsStr) {
     const ingredients = ingredientsStr.split(',');
     try {
       loading.value = true;
       recipes.value = await findRecipesByIngredients(ingredients);
+    } catch (e) {
+      console.error(e);
+    } finally {
+      loading.value = false;
+    }
+  } else if (lat && lng) {
+    try {
+      loading.value = true;
+      const ingredients = ingredientsStr ? ingredientsStr.split(',') : [];
+      recipes.value = await findRecipesByLocation(parseFloat(lat), parseFloat(lng), ingredients);
     } catch (e) {
       console.error(e);
     } finally {
