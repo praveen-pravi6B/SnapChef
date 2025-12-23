@@ -53,6 +53,46 @@ export const findRecipesByIngredients = async (ingredients: string[]): Promise<R
   }
 };
 
+export const findRecipesByLocation = async (latitude: number, longitude: number, ingredients: string[] = []): Promise<Recipe[]> => {
+  const apiKey = import.meta.env.VITE_GEMINI_API_KEY;
+  if (!apiKey) {
+    console.error('API_KEY is not set');
+    return [];
+  }
+
+  const genAI = new GoogleGenerativeAI(apiKey);
+  const model = genAI.getGenerativeModel({ model: 'gemini-pro-latest' });
+
+  let prompt = `Identify the region/country for coordinates ${latitude}, ${longitude}.`;
+
+  if (ingredients.length > 0) {
+    prompt += ` Then suggest 5 popular local/traditional recipes from that region that use these ingredients: ${ingredients.join(', ')}.`;
+  } else {
+    prompt += ` Then suggest 5 popular local/traditional recipes from that region.`;
+  }
+
+  prompt += ` Return a JSON array with objects containing 'strMeal' (name) and 'idMeal' (unique id, can be random string).
+  Do not include markdown formatting like \`\`\`json. Just return the raw JSON array.`;
+
+  try {
+    const result = await model.generateContent(prompt);
+    const response = await result.response;
+    const text = response.text();
+
+    const jsonStr = text.replace(/```json/g, '').replace(/```/g, '').trim();
+    const recipes = JSON.parse(jsonStr);
+
+    return recipes.map((recipe: any) => ({
+      idMeal: recipe.idMeal || Math.random().toString(36).substring(7),
+      strMeal: recipe.strMeal,
+      strMealThumb: `https://placehold.co/600x400?text=${encodeURIComponent(recipe.strMeal)}`
+    }));
+  } catch (error) {
+    console.error('Error fetching location-based recipes:', error);
+    return [];
+  }
+};
+
 export const getRecipeDetails = async (recipeName: string, availableIngredients: string[]): Promise<Recipe | null> => {
   const apiKey = import.meta.env.VITE_GEMINI_API_KEY;
   if (!apiKey) {

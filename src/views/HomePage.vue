@@ -114,12 +114,37 @@ const removeIngredient = (index: number) => {
 };
 
 const findRecipes = () => {
-  router.push({
-    path: '/recipes',
-    query: {
-      ingredients: ingredients.value.join(',')
-    }
-  });
+  const navigate = (queryParams: any) => {
+    router.push({
+      path: '/recipes',
+      query: queryParams
+    });
+  };
+
+  const baseQuery: any = {
+    ingredients: ingredients.value.join(',')
+  };
+
+  if (navigator.geolocation) {
+    // Try to get location with a short timeout so we don't block the user too long
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        const { latitude, longitude } = position.coords;
+        navigate({
+          ...baseQuery,
+          lat: latitude.toString(),
+          lng: longitude.toString()
+        });
+      },
+      (error) => {
+        console.warn('Location access denied or failed, proceeding with ingredients only', error);
+        navigate(baseQuery);
+      },
+      { timeout: 5000 }
+    );
+  } else {
+    navigate(baseQuery);
+  }
 };
 </script>
 
